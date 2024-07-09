@@ -1,0 +1,14 @@
+{
+  "type": "module",
+  "name": "rickandmorty",
+  "version": "1.0.0",
+  "description": "",
+  "main": "script.js",
+  "scripts": {},
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "node-fetch": "^3.3.2",
+    "pg": "^8.12.0"
+  }
+}
