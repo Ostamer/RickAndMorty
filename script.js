@@ -30,32 +30,40 @@ async function createTable() {
   }
 }
 
-async function insertData() {
+async function insertData(character) {
+  try {
+    const query = `
+      INSERT INTO characters (name, data)
+      VALUES ($1, $2)
+    `;
+    const values = [character.name, character];
+    console.log(values);
+    await client.query(query, values);
+
+  } catch (error) {
+    console.error('Возникла ошибка при добавлении данных в бд:', error);
+  }
+}
+
+async function fetchDataFromApi() {
   try {
     const response = await fetch('https://rickandmortyapi.com/api/character/');
     const data = await response.json();
-    console.log(data);
-    for (const character of data.results) {
-      const query = `
-        INSERT INTO characters (name, data)
-        VALUES ($1, $2)
-      `;
-      const values = [character.name, character];
-      console.log(values);
-      await client.query(query, values);
-    }
-
-    console.log('Данные загружены в базу данных');
+    return data.results;
   } catch (error) {
-    console.error('Произошла ошибка:', error);
+    console.error('Ошибка при получении данных от api:', error);
+    return [];
   }
 }
 
 async function fetchDataAndInsertIntoDb() {
   await client.connect();
   await createTable();
-  await insertData(); 
-  await client.end();  
+  const characters = await fetchDataFromApi();
+  for (const character of characters) {
+    await insertData(character);
+  }
+  await client.end();
 }
 
 fetchDataAndInsertIntoDb();
